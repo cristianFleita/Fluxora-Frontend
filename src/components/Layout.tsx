@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import ConnectWalletModal from "./ConnectWalletModal";
 import Footer from "./Footer";
+import { cn } from "../lib/utils";
 import "./Layout.css";
 
 interface LayoutProps {
@@ -34,11 +35,11 @@ export default function Layout({
         {/* Main Content Area */}
         <div className="flex flex-col flex-1 min-w-0 transition-all duration-300 ease-in-out">
           <main 
+            id="main-content"
             className={cn(
               "flex-1 p-4 md:p-8 overflow-auto transition-all duration-300 ease-in-out",
               isSidebarCollapsed ? "md:ml-20" : "md:ml-64"
             )}
-            role="main"
           >
             <Outlet />
           </main>
