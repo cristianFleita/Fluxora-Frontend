@@ -85,7 +85,7 @@ export default function TrustSection({ theme = "light" }: TrustSectionProps) {
         >
           <StarIcon />
           <span
-            className="text-sm font-semibold"
+            className="text-label-lg"
             style={{ color: isDark ? "#e8ecf4" : "#1e293b" }}
           >
             Powered by Stellar
@@ -93,7 +93,7 @@ export default function TrustSection({ theme = "light" }: TrustSectionProps) {
         </div>
 
         <p
-          className="text-center text-base leading-relaxed max-w-md"
+          className="text-body-md text-center max-w-md"
           style={{ color: isDark ? "#94a3b8" : "#475569" }}
         >
           Built specifically for the Stellar ecosystem. Native integration with
@@ -122,14 +122,14 @@ export default function TrustSection({ theme = "light" }: TrustSectionProps) {
               </div>
 
               <p
-                className="text-base font-bold text-center"
+                className="text-heading-4 text-center"
                 style={{ color: isDark ? "#e8ecf4" : "#1e293b" }}
               >
                 {title}
               </p>
 
               <p
-                className="text-sm text-center"
+                className="text-body-sm text-center"
                 style={{ color: isDark ? "#6b7a94" : "#94a3b8" }}
               >
                 {subtitle}
