@@ -65,10 +65,7 @@ export default function App() {
           <Route
             path="/app"
             element={
-              <Layout 
-                isSidebarOpen={isSidebarOpen}
-                onSidebarClose={() => setIsSidebarOpen(false)}
-              />
+              <Layout />
             }
           >
             <Route index element={<Dashboard />} />

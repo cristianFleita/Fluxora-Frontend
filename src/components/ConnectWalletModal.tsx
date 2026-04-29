@@ -127,7 +127,7 @@ export default function ConnectWalletModal({
           type="button"
           ref={closeButtonRef}
           style={{
-            ...localStyles.closeButton,
+            ...(inlineStyles.closeButton as React.CSSProperties),
             boxShadow: isCloseFocused
               ? "0 0 0 2px var(--surface-base), 0 0 0 4px var(--interactive-focus-ring)"
               : "none",
@@ -135,6 +135,8 @@ export default function ConnectWalletModal({
           onFocus={() => setIsCloseFocused(true)}
           onBlur={() => setIsCloseFocused(false)}
           onClick={onClose}
+          onFocus={() => setIsCloseFocused(true)}
+          onBlur={() => setIsCloseFocused(false)}
           aria-label="Close wallet connection dialog"
         >
           <svg
@@ -165,7 +167,7 @@ export default function ConnectWalletModal({
           </p>
         </div>
 
-        <div style={localStyles.walletList} role="list" aria-label="Wallet providers">
+        <div style={inlineStyles.walletList as React.CSSProperties} role="list" aria-label="Wallet providers">
           {walletOptions.map((wallet) => {
             const isActive =
               hoveredOptionId === wallet.id || focusedOptionId === wallet.id;
@@ -174,8 +176,9 @@ export default function ConnectWalletModal({
               <button
                 key={wallet.id}
                 type="button"
+                role="listitem"
                 style={{
-                  ...localStyles.walletOption,
+                  ...(inlineStyles.walletOption as React.CSSProperties),
                   background: isActive ? "var(--surface-elevated)" : "var(--surface-neutral)",
                   borderColor: isActive ? "var(--border-interactive)" : "var(--border-neutral)",
                   boxShadow: isActive
@@ -189,12 +192,12 @@ export default function ConnectWalletModal({
                 onBlur={() => setFocusedOptionId(null)}
                 aria-label={`Connect with ${wallet.name}`}
               >
-                <div style={localStyles.walletIcon} aria-hidden="true">
+                <div style={inlineStyles.walletIcon as React.CSSProperties} aria-hidden="true">
                   {wallet.icon}
                 </div>
-                <div style={localStyles.walletInfo}>
-                  <div style={localStyles.walletName}>{wallet.name}</div>
-                  <div style={localStyles.walletDescription}>{wallet.description}</div>
+                <div style={inlineStyles.walletInfo as React.CSSProperties}>
+                  <div style={inlineStyles.walletName as React.CSSProperties}>{wallet.name}</div>
+                  <div style={inlineStyles.walletDescription as React.CSSProperties}>{wallet.description}</div>
                 </div>
                 <svg
                   className={styles.chevron}
@@ -230,7 +233,7 @@ export default function ConnectWalletModal({
   );
 }
 
-const localStyles: Record<string, CSSProperties> = {
+const inlineStyles: Record<string, CSSProperties> = {
   backdrop: {
     position: "fixed",
     top: 0,

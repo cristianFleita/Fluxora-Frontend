@@ -524,7 +524,6 @@ export default function CreateStreamModal({
           );
         })()}
 
-
           {currentStep === 3 &&
             (() => {
               const mockRecipient =

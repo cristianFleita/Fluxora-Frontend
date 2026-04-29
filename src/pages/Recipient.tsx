@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import EmptyState from "../components/EmptyState";
 import RecipientStreams from "../components/recipient/RecipientStreams";
 import RecipientLoading from "../components/RecipientLoading";
+import ZeroAccrualBanner from "../components/ZeroAccrualBanner";
 import "./Streams.css";
 import "./Recipient.css";
 
@@ -20,6 +21,8 @@ export default function Recipient() {
   const walletConnected = true;
   const hasStreams = activeStreams > 0;
 
+  // Zero-accrual: connected + streams exist + no withdrawable balance yet
+  const isZeroAccrual = walletConnected && hasStreams && balance === 0;
   const disabled = !walletConnected || balance === 0;
 
   if (loading) return <RecipientLoading />;
@@ -64,6 +67,20 @@ export default function Recipient() {
           </button>
         </div>
       </section>
+
+      {/* ── Zero-accrual banner (streams live, balance = 0) ── */}
+      {isZeroAccrual && (
+        <div style={{ marginBottom: "2rem" }}>
+          <ZeroAccrualBanner
+            reason="cliff"
+            onAction={() => {
+              /* Navigate to streams page for cliff details */
+              window.location.href = "/app/streams";
+            }}
+            actionLabel="View stream details"
+          />
+        </div>
+      )}
 
       {/* ── Overview Metrics ── */}
       <section className="streams-summary-grid" aria-label="Stream summary">

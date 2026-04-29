@@ -8,6 +8,7 @@ import ToastNotification, {
 } from "../components/ToastNotification";
 import StreamsLoading from "../components/StreamsLoading";
 import Input from "../components/Input";
+import ZeroAccrualBanner from "../components/ZeroAccrualBanner";
 import {
   getStreamRecord,
   streamRecords,
@@ -562,6 +563,13 @@ export default function Streams() {
   const selectedStream = streamId ? getStreamRecord(streamId) : undefined;
   const hasStreams = streamRecords.length > 0;
   const showEmptyState = !selectedStream && (!walletConnected || !hasStreams);
+  // Zero-accrual: connected + streams exist + nothing is withdrawable yet
+  const showZeroAccrual =
+    !showEmptyState &&
+    walletConnected &&
+    hasStreams &&
+    withdrawableNow === 0 &&
+    activeStreams.length > 0;
   const effectiveExpandedId = visibleStreams.some(
     (stream) => stream.id === expandedStreamId,
   )
@@ -682,6 +690,23 @@ export default function Streams() {
             </div>
           </section>
 
+          {/* Zero-accrual banner — streams live but nothing withdrawable yet */}
+          {showZeroAccrual && (
+            <div style={{ marginBottom: "2rem" }}>
+              <ZeroAccrualBanner
+                reason="cliff"
+                nextEventDate={nextUnlock}
+                onAction={() => {
+                  const first = streamRecords.find(
+                    (s) => s.status === "Active",
+                  );
+                  if (first) navigate(`/app/streams/${first.id}`);
+                }}
+                actionLabel="Check cliff date"
+              />
+            </div>
+          )}
+
           <section className="streams-summary-grid" aria-label="Stream summary">
             <div className="streams-summary-card">
               <span>Active streams</span>
@@ -772,32 +797,17 @@ export default function Streams() {
                   />
                 ))
               ) : (
-                <div 
-                  className="flex flex-col items-center justify-center p-16 text-center rounded-[24px]"
-                  style={{ 
-                    background: "rgba(255, 255, 255, 0.02)",
-                    border: "1px dashed rgba(148, 163, 184, 0.2)"
-                  }}
-                >
-                  <h3 className="text-xl mb-2">No matching streams found</h3>
-                  <p className="text-[#b4c0d4] mb-6 max-w-[300px]">
-                    Try adjusting your search or filter to find what you&apos;re looking for.
-                  </p>
-                  <button 
-                    type="button" 
-                    className="streams-ghost-button"
-                    onClick={() => {
-                      setSearchQuery("");
-                      setStatusFilter("All");
-                    }}
-                  >
-                    Clear all filters
-                  </button>
+                <div className="streams-empty-search">
+                  <p>No streams match your search or filter.</p>
                 </div>
               )}
             </div>
           </section>
         </>
+      )}
+
+      {toast && (
+        <ToastNotification message={toast.message} variant={toast.variant} />
       )}
 
       <CreateStreamModal
@@ -815,14 +825,6 @@ export default function Streams() {
           setIsCreateModalOpen(true);
         }}
       />
-
-      {toast ? (
-        <ToastNotification
-          message={toast.message}
-          variant={toast.variant}
-          onClose={() => setToast(null)}
-        />
-      ) : null}
     </div>
   );
 }
