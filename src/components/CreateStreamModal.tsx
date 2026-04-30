@@ -285,6 +285,7 @@ export default function CreateStreamModal({
                     success={recipientSuccess}
                   >
                     <input
+                      ref={recipientInputRef}
                       type="text"
                       className="input-field"
                       value={recipient}

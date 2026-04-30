@@ -7,6 +7,7 @@ import ToastNotification, {
   type ToastVariant,
 } from "../components/ToastNotification";
 import StreamsLoading from "../components/StreamsLoading";
+import Input from "../components/Input";
 import ZeroAccrualBanner from "../components/ZeroAccrualBanner";
 import {
   getStreamRecord,
@@ -491,6 +492,8 @@ export default function Streams() {
 
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("All");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("recent");
   const [expandedStreamId, setExpandedStreamId] = useState<string>(
     streamRecords[0]?.id ?? "",
   );
@@ -533,10 +536,22 @@ export default function Streams() {
     .map((stream) => stream.nextUnlockDate)
     .filter(Boolean)
     .sort()[0];
-  const visibleStreams =
-    statusFilter === "All"
-      ? streamRecords
-      : streamRecords.filter((stream) => stream.status === statusFilter);
+  const visibleStreams = streamRecords
+    .filter((stream) => {
+      const matchesStatus =
+        statusFilter === "All" || stream.status === statusFilter;
+      const matchesSearch =
+        stream.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        stream.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        stream.recipientName.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesStatus && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortBy === "name") return a.name.localeCompare(b.name);
+      if (sortBy === "rate") return b.monthlyRate - a.monthlyRate;
+      // Default to recent (higher ID first for demo)
+      return b.id.localeCompare(a.id);
+    });
   const selectedStream = streamId ? getStreamRecord(streamId) : undefined;
   const hasStreams = streamRecords.length > 0;
   const showEmptyState = !selectedStream && (!walletConnected || !hasStreams);
@@ -669,17 +684,19 @@ export default function Streams() {
 
           {/* Zero-accrual banner — streams live but nothing withdrawable yet */}
           {showZeroAccrual && (
-            <ZeroAccrualBanner
-              reason="cliff"
-              nextEventDate={nextUnlock}
-              onAction={() => {
-                const first = streamRecords.find(
-                  (s) => s.status === "Active",
-                );
-                if (first) navigate(`/app/streams/${first.id}`);
-              }}
-              actionLabel="Check cliff date"
-            />
+            <div style={{ marginBottom: "2rem" }}>
+              <ZeroAccrualBanner
+                reason="cliff"
+                nextEventDate={nextUnlock}
+                onAction={() => {
+                  const first = streamRecords.find(
+                    (s) => s.status === "Active",
+                  );
+                  if (first) navigate(`/app/streams/${first.id}`);
+                }}
+                actionLabel="Check cliff date"
+              />
+            </div>
           )}
 
           <section className="streams-summary-grid" aria-label="Stream summary">
@@ -714,40 +731,75 @@ export default function Streams() {
                   stream detail route for the complete layout.
                 </p>
               </div>
-              <div className="streams-filter-group" aria-label="Filter streams">
-                {STATUS_FILTERS.map((filter) => (
-                  <button
-                    type="button"
-                    key={filter}
-                    className={`streams-filter-button${
-                      statusFilter === filter ? " is-active" : ""
-                    }`}
-                    onClick={() => setStatusFilter(filter)}
-                    aria-pressed={statusFilter === filter}
-                  >
-                    {filter}
-                  </button>
-                ))}
+              <div className="flex flex-wrap items-center gap-3 w-full mt-4" aria-label="Filter and search streams">
+                <div className="flex-1 min-w-[200px]">
+                  <Input
+                    id="streams-search"
+                    aria-label="Search streams by name, ID or recipient"
+                    placeholder="Search streams..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {STATUS_FILTERS.map((filter) => (
+                    <button
+                      type="button"
+                      key={filter}
+                      className={`streams-filter-button${
+                        statusFilter === filter ? " is-active" : ""
+                      }`}
+                      onClick={() => setStatusFilter(filter)}
+                      aria-pressed={statusFilter === filter}
+                    >
+                      {filter}
+                    </button>
+                  ))}
+                </div>
+                <div className="min-w-[160px]">
+                  <Input
+                    id="streams-sort"
+                    aria-label="Sort streams"
+                    type="select"
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    options={[
+                      { value: "recent", label: "Most recent" },
+                      { value: "name", label: "Name (A-Z)" },
+                      { value: "rate", label: "Highest rate" },
+                    ]}
+                  />
+                </div>
               </div>
             </div>
 
             <div className="streams-list">
-              {visibleStreams.map((stream) => (
-                <StreamCard
-                  key={stream.id}
-                  stream={stream}
-                  expanded={effectiveExpandedId === stream.id}
-                  onToggle={() =>
-                    setExpandedStreamId((current) =>
-                      current === stream.id ? "" : stream.id,
-                    )
-                  }
-                  onOpenDetail={() => navigate(`/app/streams/${stream.id}`)}
-                />
-              ))}
+              {visibleStreams.length > 0 ? (
+                visibleStreams.map((stream) => (
+                  <StreamCard
+                    key={stream.id}
+                    stream={stream}
+                    expanded={effectiveExpandedId === stream.id}
+                    onToggle={() =>
+                      setExpandedStreamId((current) =>
+                        current === stream.id ? "" : stream.id,
+                      )
+                    }
+                    onOpenDetail={() => navigate(`/app/streams/${stream.id}`)}
+                  />
+                ))
+              ) : (
+                <div className="streams-empty-search">
+                  <p>No streams match your search or filter.</p>
+                </div>
+              )}
             </div>
           </section>
         </>
+      )}
+
+      {toast && (
+        <ToastNotification message={toast.message} variant={toast.variant} />
       )}
 
       <CreateStreamModal
@@ -765,14 +817,6 @@ export default function Streams() {
           setIsCreateModalOpen(true);
         }}
       />
-
-      {toast ? (
-        <ToastNotification
-          message={toast.message}
-          variant={toast.variant}
-          onClose={() => setToast(null)}
-        />
-      ) : null}
     </div>
   );
 }

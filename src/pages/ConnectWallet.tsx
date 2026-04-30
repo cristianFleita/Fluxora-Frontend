@@ -140,7 +140,7 @@ const styles: Record<string, CSSProperties> = {
     borderRadius: 10,
     border: "1.5px solid var(--color-accent-primary)",
     background: "var(--color-cta-primary-bg)",
-    color: "var(--color-text-inverse)",
+    color: "#ffffff",
     fontWeight: 700,
     letterSpacing: "0.01em",
     fontSize: "0.95rem",

@@ -1,4 +1,4 @@
-import { MouseEvent, useEffect, useRef, useState } from "react";
+import { CSSProperties, MouseEvent, useEffect, useRef, useState } from "react";
 import styles from "./ConnectWalletModal.module.css";
 
 interface ConnectWalletModalProps {
@@ -132,6 +132,8 @@ export default function ConnectWalletModal({
               ? "0 0 0 2px var(--surface-base), 0 0 0 4px var(--interactive-focus-ring)"
               : "none",
           }}
+          onFocus={() => setIsCloseFocused(true)}
+          onBlur={() => setIsCloseFocused(false)}
           onClick={onClose}
           onFocus={() => setIsCloseFocused(true)}
           onBlur={() => setIsCloseFocused(false)}
@@ -165,7 +167,7 @@ export default function ConnectWalletModal({
           </p>
         </div>
 
-        <div style={inlineStyles.walletList} role="list" aria-label="Wallet providers">
+        <div style={inlineStyles.walletList as React.CSSProperties} role="list" aria-label="Wallet providers">
           {walletOptions.map((wallet) => {
             const isActive =
               hoveredOptionId === wallet.id || focusedOptionId === wallet.id;
@@ -197,9 +199,22 @@ export default function ConnectWalletModal({
                   <div style={inlineStyles.walletName as React.CSSProperties}>{wallet.name}</div>
                   <div style={inlineStyles.walletDescription as React.CSSProperties}>{wallet.description}</div>
                 </div>
-                <div style={inlineStyles.chevron as React.CSSProperties} aria-hidden="true">
-                  →
-                </div>
+                <svg
+                  className={styles.chevron}
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M6 3l5 5-5 5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
               </button>
             );
           })}
