@@ -2,13 +2,12 @@ import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, Moon, Sun } from "lucide-react";
 import { useWallet } from "../wallet-connect/Walletcontext";
+import { useTheme } from "../../theme/ThemeProvider";
 import NavLink from "./NavLink";
 import WalletStatus from "./WalletStatus";
 import Breadcrumb, { type BreadcrumbItem } from "./Breadcrumb";
 
 interface AppNavbarProps {
-  onThemeToggle?: () => void;
-  theme?: "light" | "dark";
   onSidebarToggle?: () => void;
   isSidebarOpen?: boolean;
 }
@@ -121,11 +120,10 @@ function useBreadcrumbs(pathname: string): BreadcrumbItem[] {
 }
 
 export default function AppNavbar({
-  onThemeToggle,
-  theme = "dark",
   onSidebarToggle,
   isSidebarOpen = false,
 }: AppNavbarProps) {
+  const { theme, toggleTheme } = useTheme();
   const { connected, address, network, disconnect } = useWallet();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [connecting, setConnecting] = useState(false);
@@ -215,7 +213,7 @@ const location = useLocation();
         <div className="hidden md:flex items-center gap-3">
           {/* Theme toggle */}
           <button
-            onClick={onThemeToggle}
+            onClick={toggleTheme}
             aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
             className="flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full border border-[var(--navbar-icon-border)] text-[var(--navbar-icon-color)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
           >
@@ -296,7 +294,7 @@ const location = useLocation();
 
           <div className="mt-3 pt-3 border-t border-[var(--navbar-border)] flex items-center gap-3 flex-wrap">
             <button
-              onClick={onThemeToggle}
+              onClick={toggleTheme}
               aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
               className="flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full border border-[var(--navbar-icon-border)] text-[var(--navbar-icon-color)] hover:border-[var(--accent)]/50 hover:text-[var(--accent)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)]"
             >

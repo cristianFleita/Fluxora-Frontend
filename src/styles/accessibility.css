@@ -139,7 +139,9 @@ a[href] {
 a[href]:visited {
   color: var(--color-accent-secondary, #00d4aa);
 }
-NAVIGATION LINKS
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   NAVIGATION LINKS
    ─────────────────────────────────────────────────────────────────────────
    Links in navigation get larger offset for better visual separation
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -156,8 +158,9 @@ nav a[href]:focus-visible {
 
 [role="dialog"]:focus-visible {
   outline: var(--focus-ring-width) solid var(--focus-ring-color);
-  outline-offset: var(--focus-ring-offset)Dialog)
-   ═══════════════════════════════════════════════════════════════════════════ */
+  outline-offset: var(--focus-ring-offset);
+  box-shadow: var(--focus-ring-shadow);
+}
 
 /* When a modal is active, remove focus-visible from background elements */
 [role="dialog"]:focus-visible {
