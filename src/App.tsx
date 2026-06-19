@@ -4,6 +4,7 @@ import Layout from "./components/Layout";
 import AppNavbar from "./components/navigation/AppNavbar";
 import { ThemeProvider } from "./theme/ThemeProvider";
 import { WalletProvider } from "./components/wallet-connect/Walletcontext";
+import { ToastProvider } from "./components/toast/ToastProvider";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 import Streams from "./pages/Streams";
@@ -36,37 +37,34 @@ export default function App() {
     <ThemeProvider>
       <BrowserRouter>
         <WalletProvider>
-          <a href="#main-content" className="skip-link">
-            Skip to content
-          </a>
-          <AppNavbar
-            onSidebarToggle={handleSidebarToggle}
-            isSidebarOpen={isSidebarOpen}
-          />
+          <ToastProvider>
+            <a href="#main-content" className="skip-link">
+              Skip to content
+            </a>
+            <AppNavbar
+              onSidebarToggle={handleSidebarToggle}
+              isSidebarOpen={isSidebarOpen}
+            />
 
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/dashboard" element={<Navigate to="/app" replace />} />
-            <Route path="/streams" element={<Navigate to="/app/streams" replace />} />
-            <Route path="/streams/:streamId" element={<LegacyStreamRedirect />} />
-            <Route path="/landing" element={<Landing />} />
-            <Route
-              path="/app"
-              element={
-                <Layout />
-              }
-            >
-              <Route index element={<Dashboard />} />
-              <Route path="streams" element={<Streams />} />
-              <Route path="streams/:streamId" element={<Streams />} />
-              <Route path="recipient" element={<Recipient />} />
-              <Route path="treasurypage" element={<TreasuryPage />} />
-              <Route path="error" element={<ErrorPage />} />
-              <Route path="empty-state-demo" element={<EmptyStateDemo />} />
-            </Route>
-            <Route path="/connect-wallet" element={<ConnectWallet />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/dashboard" element={<Navigate to="/app" replace />} />
+              <Route path="/streams" element={<Navigate to="/app/streams" replace />} />
+              <Route path="/streams/:streamId" element={<LegacyStreamRedirect />} />
+              <Route path="/landing" element={<Landing />} />
+              <Route path="/app" element={<Layout />}>
+                <Route index element={<Dashboard />} />
+                <Route path="streams" element={<Streams />} />
+                <Route path="streams/:streamId" element={<Streams />} />
+                <Route path="recipient" element={<Recipient />} />
+                <Route path="treasurypage" element={<TreasuryPage />} />
+                <Route path="error" element={<ErrorPage />} />
+                <Route path="empty-state-demo" element={<EmptyStateDemo />} />
+              </Route>
+              <Route path="/connect-wallet" element={<ConnectWallet />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ToastProvider>
         </WalletProvider>
       </BrowserRouter>
     </ThemeProvider>
