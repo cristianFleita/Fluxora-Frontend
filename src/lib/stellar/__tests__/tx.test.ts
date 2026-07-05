@@ -307,12 +307,10 @@ describe("Soroban transaction layer (tx.ts)", () => {
     vi.mocked(freighter.signTransaction).mockRejectedValue(new Error("Some other error"));
     await expect(
       createStream(mockAddress, mockAddress, "1000", 100, 1000)
-    ).rejects.toThrowError(
-      new TransactionError(
-        "rejected",
-        expect.stringContaining("Freighter signing failed")
-      )
-    );
+    ).rejects.toMatchObject({
+      type: "rejected",
+      message: expect.stringContaining("Freighter signing failed"),
+    });
   });
 
   it("should throw simulation error if transaction simulation fails", async () => {

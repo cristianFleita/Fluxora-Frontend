@@ -47,7 +47,11 @@ export function KeyboardShortcutsModal() {
   const [open, setOpen] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
 
-  useModalAccessibility({ isOpen: open, containerRef: dialogRef });
+  useModalAccessibility({
+    isOpen: open,
+    modalRef: dialogRef,
+    onClose: () => setOpen(false),
+  });
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {

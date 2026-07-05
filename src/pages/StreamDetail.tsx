@@ -5,6 +5,7 @@ import type { StreamRecord } from "../data/streamRecords";
 import Breadcrumb from "../components/navigation/Breadcrumb";
 import { Skeleton } from "../components/Skeleton";
 import StreamTimeline from "../components/StreamTimeline";
+import { useTickingNow } from "../hooks/useTickingNow";
 
 /**
  * StreamDetail page
@@ -32,6 +33,7 @@ export default function StreamDetail() {
   );
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const currentDate = useTickingNow();
 
   useEffect(() => {
     if (!streamId) {
@@ -151,6 +153,13 @@ export default function StreamDetail() {
     );
   }
 
+  if (!stream) {
+    // Unreachable in practice: loading/error/null are handled above, so by
+    // this point `stream` is always a resolved StreamRecord. This guard only
+    // exists to satisfy TypeScript's control-flow narrowing across state.
+    return null;
+  }
+
   const healthColor: Record<string, string> = {
     Healthy: "var(--color-success, #16a34a)",
     Attention: "var(--color-warning, #d97706)",
@@ -263,9 +272,19 @@ export default function StreamDetail() {
         </h2>
         <StreamTimeline
           startDate={stream.startDate}
+          cliffDate={stream.cliffDate ?? null}
+          currentDate={currentDate}
           endDate={stream.endDate}
-          cliffDate={stream.cliffDate}
-          progress={stream.progress}
+          withdrawableAmount={stream.withdrawableAmount}
+          totalAmount={stream.depositAmount}
+          status={
+            stream.status.toLowerCase() as
+              | "active"
+              | "paused"
+              | "completed"
+              | "upcoming"
+          }
+          isLoading={false}
         />
       </section>
 

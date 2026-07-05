@@ -15,7 +15,6 @@ import {
   validateCliffBeforeEnd,
   parseLocalDateTime,
   isBeforeLocalDateTime,
-  isDateTimeInPast,
 } from "../createStreamDates";
 
 const fcOptions = { numRuns: 150, seed: 544 };
