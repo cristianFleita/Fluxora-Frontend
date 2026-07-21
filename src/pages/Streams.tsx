@@ -34,6 +34,7 @@ import {
   formatDetailTime,
   getUrgencyLevel,
 } from "../lib/timePresentation";
+import { formatUsdc } from "../lib/formatters";
 import { useLiveAnnouncer } from "../hooks/useLiveAnnouncer";
 import { usePrefersReducedMotion } from "../hooks/usePrefersReducedMotion";
 import { useTickingNow } from "../hooks/useTickingNow";

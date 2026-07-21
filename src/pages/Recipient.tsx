@@ -9,7 +9,10 @@ import { useRecipientStreams } from "../components/treasuryOverviewPage/useTreas
 import type { StreamRecord } from "../data/streamRecords";
 import { withdraw } from "../lib/stellar/tx";
 import "./Streams.css";
-import "./Recipient.css";
+import { TRANSACTION_RESET_DELAY_MS } from "../lib/transactionConfig";
+import { useRef } from "react";
+
+// (Removed top-level timeoutRef and useEffect; will be added inside component)
 
 // Demo balances used as a UI fallback when the service returns no recipient
 // streams (no live backend yet, or no seeded match for the connected address).
@@ -71,6 +74,7 @@ export function getWithdrawAmount(balance: number): string | null {
 }
 
 export default function Recipient() {
+  const timeoutRef = useRef<number | null>(null);
   const wallet = useWallet();
   const { addToast } = useToast();
 
@@ -81,6 +85,7 @@ export default function Recipient() {
 
   const recipientStreams = useRecipientStreams(wallet.address);
 
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(t);
